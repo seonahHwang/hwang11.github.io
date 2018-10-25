@@ -55,9 +55,16 @@ void foo(int arg1, int arg2)
 
 int main()
 {
+  string s;
   string str;
   foo(1, 2);
   cout << "Hello World" << endl;
   return 0;
+}
+```
+
+```java
+public static void main(String args[]){
+  int a = 0;
 }
 ```
