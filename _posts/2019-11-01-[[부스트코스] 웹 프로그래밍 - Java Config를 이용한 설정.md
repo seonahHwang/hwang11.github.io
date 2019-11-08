@@ -1,3 +1,10 @@
+---
+title: Java config를 이용한 설정을 위한 어노테이션
+description: Java config를 이용한 설정을 위한 어노테이션
+categories:
+ - Spring
+tags:
+---  
 # Java config를 이용한 설정을 위한 어노테이션
 
 ### @Configuration
