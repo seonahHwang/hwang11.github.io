@@ -2,7 +2,7 @@
 title: Websocket과 STOMP 배경&개념 스크랩
 description: Websocket과 STOMP 배경&개념 스크랩
 categories:
- - Spring
+ - Spring-boot
 tags:
 ---  
 

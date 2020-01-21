@@ -2,7 +2,7 @@
 title: STOMP와 Sock.js를 이용한 채팅 구현
 description: STOMP와 Sock.js를 이용한 채팅 구현
 categories:
- - Spring
+ - Spring-boot
 tags:
 ---  
 
