@@ -37,24 +37,27 @@ public String index(){
 <U>URL 요청의 결과를 전달할 타입과 값을 지정하는 관리자</U> 격으로 볼 수 있음   
 
 ## 머스테치의 기본 사용 방법  
-* **{{>layout/header}}**  
-{{>}}는 현재 머스테치 파일을 기준으로 다른 파일을 가져옴  
+* ```{ {>layout/header } }```  
 
-* **리스트 순회 / 객체 필드 사용**
+```{ {>} }```는 현재 머스테치 파일을 기준으로 다른 파일을 가져옴  
+
+* **리스트 순회 / 객체 필드 사용**  
+
 ```HTML
-{{#posts}}
+{ {#posts} }
   <tr>
-    <td>{{id}}</td>
-    <td><a href="/posts/update/{{id}}">{{title}}</a></td>
-    <td>{{author}}</td>
-    <td>{{modifiedDate}}</td>
+    <td>{ {id} }</td>
+    <td><a href="/posts/update/{ {id} }">{ {title} }</a></td>
+    <td>{ {author} }</td>
+    <td>{ {modifiedDate} }</td>
   </tr>
-{{/posts}}
-```
-  * {{#posts}}  
+{ {/posts} }
+```  
+
+  * { {#posts} }  
     posts 라는 List를 순회함  
     Java의 for문과 동일함  
-  * {{id}} 등의 {{변수명}}  
+  * { {id} } 등의 { {변수명} }  
   List에서 뽑아낸 객체의 필드 사용  
 
 ## Model  

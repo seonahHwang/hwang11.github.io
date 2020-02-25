@@ -10,20 +10,22 @@ tags:
 스프링 기반의 애플리케이션에서는 보안을 위한 표준  
 
 ### 스프링 부트 1.5 vs 스프링 부트 2.0  
-spring-security-oauth2-autoconfigure 라이브러리를 사용할 경우 스프링 부트2에서도 1.5에서 쓰던 설정을 그대로 사용 가능  
+spring-security-oauth2-autoconfigure 라이브러리를 사용할 경우  
+스프링 부트2에서도 1.5에서 쓰던 설정을 그대로 사용 가능  
 
 ### 구글로그인  
 * 구글로그인 과정에서 승인된 리디렉션 URI는  
 서비스에서 파라미터로 인증 정보를 주엇을 때 인증이 성공하면 구글에서 리다이렉트할 URK  
 시큐리티에서 이미 구현해 놨으므로 사용자가 별도로 리다이렉트 URL을 지원하는 Controller를 만들 필요 없음  
 
-* ```application-oauth.properties```에서    
-```
-spring.security.oauth2.client.registration.google.scope=profile,email
-```   
-설정한 이유는 별도로 scope를 등록하지 않으면 기본값인 openid,profile,email이 등록된다  
-openid라는 scope가 있으면 openidProvider로 인식하고, 그러면 openidProvider인 서비스(구글)과 그렇지 않은 서비스로 나눠서 각각 OAuth2Service를 만들어야한다  
-따라서 하나의 OAuth2Service로 사용하기 위해 일부러 openid scope를 빼고 등록  
+* ```application-oauth.properties``` 에서  
+
+  ```java
+  spring.security.oauth2.client.registration.google.scope=profile,email
+  ```   
+  설정한 이유는 별도로 scope를 등록하지 않으면 기본값인 openid,profile,email이 등록된다  
+  openid라는 scope가 있으면 openidProvider로 인식하고, 그러면 openidProvider인 서비스(구글)과 그렇지 않은 서비스로 나눠서 각각 OAuth2Service를 만들어야한다  
+  따라서 하나의 OAuth2Service로 사용하기 위해 일부러 openid scope를 빼고 등록  
 
 * applcation.properties에서 application-oauth.properties를 호출하기 위해 ```applcation.properties``` 에  
 ```
@@ -45,33 +47,34 @@ spring.profiles.include=oauth
 
 
 * 권한 대상 지정 등 관리 설정  
- ```java
-@RequiredArgsConstructor
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final CustomOAuth2UserService customOAuth2UserService;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception{
-        http
-                .csrf().disable()
-                .headers().frameOptions().disable()
-                .and()
-                    .authorizeRequests()
-                .antMatchers("/","/css/**","/images/**","/js/**","/h2-console/**").permitAll() //permitAll은 전체 열람 권한을 주는 것  
-                .antMatchers("/api/v1/**").hasRole(Role.USER.name())
-                .anyRequest().authenticated()
-                .and()
-                    .logout()
-                        .logoutSuccessUrl("/")
-                .and()
-                    .oauth2Login()
-                        .userInfoEndpoint()
-                            .userService(customOAuth2UserService);
-    }
-}
+```java
+  @RequiredArgsConstructor
+  @EnableWebSecurity
+  public class SecurityConfig extends WebSecurityConfigurerAdapter {
+      private final CustomOAuth2UserService customOAuth2UserService;
 
- ```
+      @Override
+      protected void configure(HttpSecurity http) throws Exception{
+          http
+                  .csrf().disable()
+                  .headers().frameOptions().disable()
+                  .and()
+                      .authorizeRequests()
+                  .antMatchers("/","/css/**","/images/**","/js/**","/h2-console/**").permitAll() //permitAll은 전체 열람 권한을 주는 것  
+                  .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+                  .anyRequest().authenticated()
+                  .and()
+                      .logout()
+                          .logoutSuccessUrl("/")
+                  .and()
+                      .oauth2Login()
+                          .userInfoEndpoint()
+                              .userService(customOAuth2UserService);
+      }
+  }
+
+```
 
 1. ```@EnableWebSecurity```  
 spring security 설정들을 활성화  
@@ -101,7 +104,7 @@ OAuth 2 로그인 기능에 대한 여러 설정의 진입점
 
 * 구글 로그인 이후 가져온 사용자 정보를 기반으로 가입 및 정보수정, 세션 저장 등의 기능 지원  
 
-  ```java
+```java
   @RequiredArgsConstructor
   @Service
   public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -149,7 +152,7 @@ OAuth 2 로그인 기능에 대한 여러 설정의 진입점
       }
   }
 
-  ```
+```
 
 <br>
 
@@ -163,29 +166,28 @@ OAuth 2 로그인 기능에 대한 여러 설정의 진입점
 
 <br>
 
-* 로그인 테스트  
+* 로그인 테스트      
 ```index.mustache```  
 
-  ```java  
-  {{#userName}}
-  Logged in as : <span id="user">{{userName}}</span>
+```html  
+  { {#userName} }
+  Logged in as : <span id="user">{ {userName} }</span>
   <a href="/logout" class="btn btn-info active"
   role="button">Logout</a>
-  {{/userName}}
+  { {/userName} }
 
-  {{^userName}}
+  { {^userName} }
   <a href="/oauth2/authorization/google"
   class="btn btn-success active" role="button">Google login</a>
   <a href="/oauth2/authorization/naver"
   class="btn btn-secondary active" role="button">Naver login</a>
-  {{/userName}}
+  { {/userName} }
+```  
 
-  ```  
-  1. ```{{#userName}}```  
-  머스테치는 if문을 제공하지 않고 true/false 여부만 판단  
-  따라서 항상 머스테치에는 최종값을 넘겨줘야한다  
-  ```{{^userName}}```  
-  해당값이 존재하지 않을 때는 ^ 사용    
-
+  1. ```{ {#userName} }```  
+    머스테치는 if문을 제공하지 않고 true/false 여부만 판단  
+    따라서 항상 머스테치에는 최종값을 넘겨줘야한다    
+    ```{ {^userName} }```  
+    해당값이 존재하지 않을 때는 ^ 사용    
   2. ```a href="/logout"```  
   스프링 시큐리티에서 기본적으로 제공하는 로그아웃 URL. 따로 logout 컨트롤러를 만들필요가 없음  

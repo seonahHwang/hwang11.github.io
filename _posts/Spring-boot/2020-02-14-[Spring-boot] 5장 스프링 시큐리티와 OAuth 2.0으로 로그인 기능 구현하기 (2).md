@@ -47,20 +47,19 @@ API test에서 사용자에게 권한이 있는 것 처럼 하기위해서
 
 ```mvc.perform```  
 생성된 ```MockMvc```를 통해 API 테스트  
-
-#### 문제 : @WebMvcTest에서 CustomOauth2UserService를 찾을 수 없음  
+#### 문제 : @WebMvcTest에서 CustomOauth2UserService를 찾을 수 없음   
 이유는 ```@WebMvcTest```가 ```CustomOauth2UserService```를 스캔하지 않기 때문에  
-``` @WebMvcTest```는 ```@ControllerAdvice```, ```@Controller```는 읽고, ```@Repository```, ```@Service```, ```@Component```는 읽지 않음  
+```@WebMvcTest```는 ```@ControllerAdvice```, ```@Controller```는 읽고, ```@Repository```, ```@Service```, ```@Component```는 읽지 않음  
  따라서, ```SecurityConfig```는 읽었지만, ```SecurityConfig```를 생성하기 위한 ```CustomOauth2UserService```을 읽을 수 없어 에러가 발생  
+해결 : 스캔 대상에서 ```SecurityConfig``` 제거  
 
- 해결 : 스캔 대상에서 ```SecurityConfig``` 제거  
- ```java
- @WebMvcTest(controllers = HelloController.class,
+```java
+@WebMvcTest(controllers = HelloController.class,
 excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,classes = SecurityConfig.class)
+       @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,classes = SecurityConfig.class)
 })
- ```  
- ####  문제 : @EnableJpaAuditing 에러  
+```
+#### 문제 : @EnableJpaAuditing 에러  
  ```@EnableJpaAuditing```를 사용하기 위해서는 Entity클래스가 필요한데,
  ```@WebMvcTest```는 JPA 사용불가이므로 Entity클래스 없음  
  ```@EnableJpaAuditing```이 ```@SpringBootApplication```와 함께 있어서 ```@WebMvcTest```에서도 스캔하게 되었음.  
